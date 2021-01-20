@@ -6,7 +6,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Pokemon info</h1>
+        <h1 className="title">Pokemon info</h1>
         <PokeList />
       </header>
     </div>

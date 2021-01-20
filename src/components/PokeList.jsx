@@ -1,44 +1,97 @@
 import { useEffect, useState, memo } from "react";
 import PokeCard from "./PokeCard";
-import axios from "axios";
 
-import { CardDeck } from "react-bootstrap";
+import Pagination from "react-js-pagination";
 import "./Poke.css";
 
 const PokeList = () => {
-  const [pokemons, setPokemonList] = useState([]);
-  let PAGE_LIMIT = 6;
+  const [result, setResult] = useState([]);
+  const [pokemons, setPokemons] = useState([]);
+  const [load, setLoad] = useState(true);
+
+  let PAGE_LIMIT = 200;
+  let OFFSET = 20;
 
   const apiURL = "https://pokeapi.co/api/v2/pokemon/";
 
-  const getPkmnList = async () => {
-    try {
-      let response = await axios(`${apiURL}?limit=${PAGE_LIMIT}`);
-      setPokemonList(response.data.results);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  // const getPkmnList = async () => {
+  //   try {
+  //     let response = await axios(`${apiURL}?limit=${PAGE_LIMIT}&${OFFSET}`);
+  //     setPokemonList(response.data.results);
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
+
+  const pokeArr = [];
 
   useEffect(() => {
-    getPkmnList();
-    // return console.log("ok");
+    // getPkmnList();
+
+    fetch(`${apiURL}?limit=${PAGE_LIMIT}&${OFFSET}`)
+      .then((response) => response.json())
+      .then((data) =>
+        setResult(
+          data.results.map((item) => {
+            fetch(item.url)
+              .then((response) => response.json())
+              .then((allPokemon) => pokeArr.push(allPokemon));
+            setPokemons(pokeArr);
+          })
+        )
+      );
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  //   console.log(pokemons);
+  setTimeout(() => {
+    setLoad(false);
+  }, 5000);
+
+  pokemons.sort(function (a, b) {
+    return a.id - b.id;
+  });
+  console.log(pokemons);
+
+  // pagination
+
+  const pokePerPage = 6;
+  const [activePage, setCurrentPage] = useState(1);
+
+  // Logic for displaying current pokemons
+  const indexOfLastPokemon = activePage * pokePerPage;
+  const indexOfFirstPokemon = indexOfLastPokemon - pokePerPage;
+  const currentPokemons = pokemons.slice(
+    indexOfFirstPokemon,
+    indexOfLastPokemon
+  );
+
+  const handlePageChange = (pageNumber) => {
+    console.log(`active page is ${pageNumber}`);
+    setCurrentPage(pageNumber);
+  };
 
   return (
     <div className="container">
       <div className="list-group">
-        {pokemons.length ? (
-          pokemons.map((pkmn) => (
-            <PokeCard key={pkmn.name} pokeURL={pkmn.url} />
+        {currentPokemons.length ? (
+          currentPokemons.map((pkmn) => (
+            <PokeCard key={pkmn.name} pokemon={pkmn} />
           ))
         ) : (
           <p>Cargando...</p>
         )}
+      </div>
+      <div className="pagination justify-content-center">
+        <Pagination
+          activePage={activePage}
+          itemsCountPerPage={5}
+          totalItemsCount={pokemons.length}
+          pageRangeDisplayed={5}
+          onChange={handlePageChange}
+          itemClass="page-item"
+          linkClass="page-link btn btn-dark"
+        />
       </div>
     </div>
   );
