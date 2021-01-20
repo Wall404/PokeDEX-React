@@ -2,7 +2,7 @@
 
 ## Creado con create-react-app
 
-#### `https://github.com/facebook/create-react-app)`
+#### `https://github.com/facebook/create-react-app`
 
 ## Para correr el proyecto
 
