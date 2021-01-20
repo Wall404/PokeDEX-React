@@ -9,19 +9,10 @@ const PokeList = () => {
   const [pokemons, setPokemons] = useState([]);
   const [load, setLoad] = useState(true);
 
-  let PAGE_LIMIT = 200;
+  let PAGE_LIMIT = 101;
   let OFFSET = 20;
 
   const apiURL = "https://pokeapi.co/api/v2/pokemon/";
-
-  // const getPkmnList = async () => {
-  //   try {
-  //     let response = await axios(`${apiURL}?limit=${PAGE_LIMIT}&${OFFSET}`);
-  //     setPokemonList(response.data.results);
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
 
   const pokeArr = [];
 
