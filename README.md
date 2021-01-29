@@ -1,4 +1,4 @@
-# IOL Challenge
+# PokeDEX React
 
 ## Creado con create-react-app
 
